@@ -934,9 +934,6 @@ zvol_read(void *arg)
   zfs_locked_range_t *lr = zfs_rangelock_enter(&zv->zv_rangelock,
       uio.uio_loffset, uio.uio_resid, RL_READER);
 
-  zfs_locked_range_t *lr = zfs_rangelock_enter(&zv->zv_rangelock,
-      uio.uio_loffset, uio.uio_resid, RL_READER);
-
 	uint64_t volsize = zv->zv_volsize;
 	while (uio.uio_resid > 0 && uio.uio_loffset < volsize) {
 		uint64_t bytes = MIN(uio.uio_resid, DMU_MAX_ACCESS >> 1);
@@ -1108,7 +1105,7 @@ zvol_request(struct request_queue *q, struct bio *bio)
 		zvr = kmem_alloc(sizeof (zv_request_t), KM_SLEEP);
 		zvr->zv = zv;
 		zvr->bio = bio;
-    taskq_init(&zvr->ent);
+    taskq_init_ent(&zvr->ent);
 
 		/*
 		 * We don't want this thread to be blocked waiting for i/o to
